@@ -1,89 +1,67 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>QR Code Scanner</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Maker</title>
   <style>
-    /* Estilos CSS */
-
     body {
       margin: 0;
       padding: 0;
+      background-color: #0174DF;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    #container {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      background-color: #0174DF;
-    }
-
-    #container {
-      text-align: center;
-    }
-
-    #title {
-      font-size: 30px;
-      font-weight: bold;
-      color: yellow;
-      margin-bottom: 20px;
-    }
-
-    #coins {
-      font-size: 24px;
-      color: yellow;
-      margin-bottom: 20px;
+      height: 100vh;
     }
 
     #qr-code-result {
       font-size: 24px;
-      font-weight: bold;
-      color: white;
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
-    #ar-video {
-      max-width: 90%;
-      width: 300px;
-      height: 300px;
-      border: 5px solid yellow;
+    #coins {
+      font-size: 18px;
+      margin-bottom: 20px;
     }
 
     #return-button {
-      width: 200px;
-      height: 50px;
       background-color: yellow;
       color: black;
-      font-weight: bold;
-      font-size: 16px;
       border: none;
-      border-radius: 5px;
-      margin-bottom: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
       display: none;
     }
   </style>
 </head>
 <body>
   <div id="container">
-    <h1 id="title">QR Code Maker</h1>
-    <div id="coins">Moedas: 0</div>
-    <hr>
-    <video id="ar-video"></video>
+    <h1 style="color: yellow;">QR Code Maker</h1>
     <div id="qr-code-result"></div>
+    <div id="coins">Moedas: 0</div>
     <button id="return-button">Retornar</button>
   </div>
 
+  <script src="https://unpkg.com/@zxing/library@0.18.5"></script>
   <script>
     const coinsPerScan = 10; // Número de moedas concedidas por leitura de QR code
     let totalCoins = 0; // Total de moedas do usuário
-    let scannedQRCodes = []; // Array para armazenar os textos dos QR codes já lidos
+    let scannedQRCodes = []; // Array para armazenar os QR codes lidos
 
     // Mapeamento dos QR codes e seus textos correspondentes
     const qrCodeTexts = {
       "CNC Laser": "Máquina CNC a laser",
-      "Resina": "Impressora com Resina",
-      "3D": "Impressora 3D"
+      "qr-code-2": "Texto do QR code 2",
+      "qr-code-3": "Texto do QR code 3"
       // Adicione mais QR codes e seus respectivos textos aqui
     };
 
@@ -104,7 +82,10 @@
       const returnButton = document.getElementById('return-button');
       returnButton.style.display = 'block';
 
-      scannedQRCodes.push(text); // Adicionar o texto do QR code ao array de QR codes lidos
+      // Verificar se o QR code já foi processado antes de adicioná-lo ao array
+      if (!scannedQRCodes.includes(text)) {
+        scannedQRCodes.push(text);
+      }
     }
 
     // Função executada quando um QR code é lido
@@ -127,8 +108,6 @@
 
       const returnButton = document.getElementById('return-button');
       returnButton.style.display = 'none';
-
-      startQRCodeReader(); // Reiniciar a leitura de QR codes
     }
 
     // Função para iniciar o leitor de QR code
@@ -151,11 +130,12 @@
 
     // Iniciar a leitura de QR codes ao carregar a página
     window.addEventListener('load', () => {
+      startQRCodeReader();
+
+      // Event listener para o botão de retornar
       const returnButton = document.getElementById('return-button');
       returnButton.addEventListener('click', onReturnButtonClick);
-
-      updateCoins();
-      startQRCodeReader();
+      returnButton.style.display = 'none';
     });
   </script>
 </body>
