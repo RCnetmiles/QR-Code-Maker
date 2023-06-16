@@ -13,7 +13,7 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      background-color: DeepSkyBlue;
+      background-color: #0174DF;
     }
 
     #container {
@@ -58,6 +58,7 @@
       border: none;
       border-radius: 5px;
       margin-bottom: 20px;
+      display: none;
     }
   </style>
 </head>
@@ -68,7 +69,7 @@
     <hr>
     <video id="ar-video"></video>
     <div id="qr-code-result"></div>
-    <button id="return-button" style="display: none;">Retornar</button>
+    <button id="return-button">Retornar</button>
   </div>
 
   <script>
@@ -79,8 +80,8 @@
     // Mapeamento dos QR codes e seus textos correspondentes
     const qrCodeTexts = {
       "CNC Laser": "Máquina CNC a laser",
-      "Impressora Resina": "Uma impressora 3D com tecnologia de impressão por Luz Violeta",
-      "qr-code-3": "Texto do QR code 3"
+      "Impressora Resina": "RESINA",
+      "Impressora 3D": "3D"
       // Adicione mais QR codes e seus respectivos textos aqui
     };
 
@@ -101,7 +102,7 @@
       const returnButton = document.getElementById('return-button');
       returnButton.style.display = 'block';
 
-      isScanning = false;
+      isScanning = false; // Parar a leitura de QR code após a primeira leitura bem-sucedida
     }
 
     // Função executada quando um QR code é lido
@@ -123,7 +124,9 @@
       const returnButton = document.getElementById('return-button');
       returnButton.style.display = 'none';
 
-      isScanning = true;
+      isScanning = true; // Permitir a leitura de QR code novamente
+
+      startQRCodeReader(); // Reiniciar a leitura de QR codes
     }
 
     // Função para iniciar o leitor de QR code
