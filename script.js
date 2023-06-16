@@ -3,9 +3,9 @@ let totalCoins = 0; // Total de moedas do usuário
 
 // Mapeamento dos QR codes e seus textos correspondentes
 const qrCodeTexts = {
-  "CNC Laser": "É uma maquina CNC a Laser",
+  "CNC Laser": "Máquina CNC a laser",
   "qr-code-2": "Texto do QR code 2",
-  "qr-code-3": "Texto do QR code 3",
+  "qr-code-3": "Texto do QR code 3"
   // Adicione mais QR codes e seus respectivos textos aqui
 };
 
@@ -22,12 +22,16 @@ function processQRCodeText(text) {
 
   totalCoins += coinsPerScan;
   updateCoins();
+
+  const returnButton = document.getElementById('return-button');
+  returnButton.style.display = 'block';
 }
 
 // Função executada quando um QR code é lido
-function onQRCodeRead(text) {
-  if (text) {
-    processQRCodeText(text);
+function onQRCodeRead(result) {
+  if (result && result.text) {
+    const qrCodeText = result.text;
+    processQRCodeText(qrCodeText);
   }
 }
 
@@ -35,22 +39,36 @@ function onQRCodeRead(text) {
 function onReturnButtonClick() {
   const qrCodeResultElement = document.getElementById('qr-code-result');
   qrCodeResultElement.innerText = '';
+
+  const returnButton = document.getElementById('return-button');
+  returnButton.style.display = 'none';
 }
 
-// Configuração do leitor de QR code
-const html5QrCode = new Html5Qrcode('reader');
-html5QrCode.start(
-  { facingMode: 'environment' }, // Use a câmera traseira do dispositivo
-  { fps: 10, qrbox: 250 }, // Configurações de leitura
-  (text) => {
-    // Verifica se o texto do QR code está mapeado no objeto qrCodeTexts
-    if (qrCodeTexts.hasOwnProperty(text)) {
-      const qrCodeText = qrCodeTexts[text];
-      onQRCodeRead(qrCodeText);
-    }
-  } // Função executada quando um QR code é lido
-);
+// Função para iniciar o leitor de QR code
+function startQRCodeReader() {
+  const codeReader = new ZXing.BrowserQRCodeReader();
+  codeReader
+    .decodeOnceFromVideoDevice(undefined, 'ar-video')
+    .then((result) => {
+      onQRCodeRead(result);
+      startQRCodeReader(); // Continuar a leitura de QR codes após cada leitura bem-sucedida
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
 
-// Evento de clique do botão de retornar
-const returnButton = document.getElementById('return-button');
-returnButton.addEventListener('click', onReturnButtonClick);
+// Função para parar o leitor de QR code
+function stopQRCodeReader() {
+  ZXing.BrowserQRCodeReader.reset();
+}
+
+// Iniciar a leitura de QR codes ao carregar a página
+window.addEventListener('load', () => {
+  startQRCodeReader();
+
+  // Event listener para o botão de retornar
+  const returnButton = document.getElementById('return-button');
+  returnButton.addEventListener('click', onReturnButtonClick);
+  returnButton.style.display = 'none';
+});
