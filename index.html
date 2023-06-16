@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>QR Code Maker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    #header {
+      background-color: #b2cfff;
+      padding: 10px;
+      color: yellow;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    h1 {
+      margin: 0;
+      font-size: 24px;
+    }
+    #return-button {
+      background-color: yellow;
+      color: black;
+      font-weight: bold;
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
+    #coins {
+      color: yellow;
+      font-weight: bold;
+      font-size: 18px;
+      padding: 10px;
+    }
+    #reader {
+      margin-top: 50px;
+    }
+    #qr-code-result {
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <h1>QR Code Maker</h1>
+    <div id="coins">Moedas: 0</div>
+  </div>
+  <div id="reader"></div>
+  <div id="qr-code-result"></div>
+  <button id="return-button">Retornar</button>
+
+  <script src="https://cdn.rawgit.com/dwa012/html5-qrcode/gh-pages/dist/html5-qrcode.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
