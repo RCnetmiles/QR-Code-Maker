@@ -1,70 +1,105 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>QR Code Maker</title>
+  <title>QR Code Scanner</title>
   <script src="https://unpkg.com/@zxing/library@latest"></script>
-  <script src="https://rcnetmiles.github.io/QR-Code-Maker/script.js"></script>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
-
-    #header {
-      background-color: #c6e2ff;
-      padding: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    #header h1 {
-      color: yellow;
-    }
-
-    #header #coins {
-      color: white;
-      font-weight: bold;
-    }
-
-    #content {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: calc(100vh - 50px);
-    }
-
-    #qr-code-result {
-      text-align: center;
-      font-size: 24px;
-      font-weight: bold;
-    }
-
-    #return-button {
-      width: 200px;
-      height: 60px;
-      background-color: yellow;
-      color: black;
-      font-size: 18px;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      margin-top: 20px;
+    #ar-video {
+      width: 100%;
+      height: auto;
     }
   </style>
 </head>
 <body>
-  <div id="header">
-    <h1>QR Code Maker</h1>
-    <div id="coins">Moedas: 0</div>
-  </div>
+  <h1 id="title">QR Code Maker</h1>
+  <div id="coins" style="position: absolute; top: 10px; right: 10px; color: yellow;"></div>
+  <hr style="background-color: lightblue; height: 5px; margin: 0;">
+  <div id="qr-code-result"></div>
+  <button id="return-button" style="display: none; background-color: yellow; width: 200px;">Retornar</button>
 
-  <div id="content">
-    <div>
-      <div id="qr-code-result"></div>
-      <button id="return-button">Retornar</button>
-    </div>
-  </div>
+  <script>
+    const coinsPerScan = 10; // Número de moedas concedidas por leitura de QR code
+    let totalCoins = 0; // Total de moedas do usuário
 
+    // Mapeamento dos QR codes e seus textos correspondentes
+    const qrCodeTexts = {
+      "CNC Laser": "Máquina CNC a laser",
+      "qr-code-2": "Texto do QR code 2",
+      "qr-code-3": "Texto do QR code 3"
+      // Adicione mais QR codes e seus respectivos textos aqui
+    };
+
+    // Função para atualizar o total de moedas exibido na página
+    function updateCoins() {
+      const coinsElement = document.getElementById('coins');
+      coinsElement.innerText = `Moedas: ${totalCoins}`;
+    }
+
+    // Função para processar o texto do QR code
+    function processQRCodeText(text) {
+      const qrCodeResultElement = document.getElementById('qr-code-result');
+      qrCodeResultElement.innerText = text;
+
+      totalCoins += coinsPerScan;
+      updateCoins();
+
+      const returnButton = document.getElementById('return-button');
+      returnButton.style.display = 'block';
+    }
+
+    // Função executada quando um QR code é lido
+    function onQRCodeRead(result) {
+      if (result && result.text) {
+        const qrCodeText = result.text;
+        if (qrCodeTexts.hasOwnProperty(qrCodeText)) {
+          processQRCodeText(qrCodeTexts[qrCodeText]);
+        }
+      }
+    }
+
+    // Função executada quando o botão de retornar é clicado
+    function onReturnButtonClick() {
+      const qrCodeResultElement = document.getElementById('qr-code-result');
+      qrCodeResultElement.innerText = '';
+
+      const returnButton = document.getElementById('return-button');
+      returnButton.style.display = 'none';
+    }
+
+    // Função para iniciar o leitor de QR code
+    function startQRCodeReader() {
+      const codeReader = new ZXing.BrowserQRCodeReader();
+      codeReader
+        .decodeOnceFromVideoDevice(undefined, 'ar-video')
+        .then((result) => {
+          onQRCodeRead(result);
+          startQRCodeReader(); // Continuar a leitura de QR codes após cada leitura bem-sucedida
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+
+    // Função para parar o leitor de QR code
+    function stopQRCodeReader() {
+      ZXing.BrowserQRCodeReader.reset();
+    }
+
+    // Iniciar a leitura de QR codes ao carregar a página
+    window.addEventListener('load', () => {
+      const videoElement = document.createElement('video');
+      videoElement.id = 'ar-video';
+      document.body.appendChild(videoElement);
+
+      const titleElement = document.getElementById('title');
+      titleElement.style.color = 'yellow';
+
+      const returnButton = document.getElementById('return-button');
+      returnButton.addEventListener('click', onReturnButtonClick);
+
+      updateCoins();
+      startQRCodeReader();
+    });
+  </script>
 </body>
 </html>
