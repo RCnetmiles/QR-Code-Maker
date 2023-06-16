@@ -2,21 +2,22 @@
 <html>
 <head>
   <title>QR Code Scanner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://unpkg.com/@zxing/library@latest"></script>
   <style>
     body {
       margin: 0;
       padding: 0;
-    }
-
-    #container {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       background-color: black;
-      position: relative;
+    }
+
+    #container {
+      text-align: center;
     }
 
     #title {
@@ -29,27 +30,21 @@
     #coins {
       font-size: 24px;
       color: yellow;
-      position: absolute;
-      top: 10px;
-      right: 10px;
+      margin-bottom: 20px;
     }
 
     #qr-code-result {
-      font-size: 50px;
+      font-size: 24px;
       font-weight: bold;
       color: white;
       text-align: center;
-      z-index: 1;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      margin-bottom: 20px;
     }
 
     #ar-video {
-      width: 90%;
-      max-width: 500px;
-      height: auto;
+      max-width: 90%;
+      width: 300px;
+      height: 300px;
       border: 5px solid yellow;
     }
 
@@ -62,10 +57,7 @@
       font-size: 16px;
       border: none;
       border-radius: 5px;
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+      margin-bottom: 20px;
     }
   </style>
 </head>
@@ -73,7 +65,7 @@
   <div id="container">
     <h1 id="title">QR Code Maker</h1>
     <div id="coins">Moedas: 0</div>
-    <hr style="background-color: lightblue; height: 8px; width: 100%; margin: 0;">
+    <hr>
     <video id="ar-video"></video>
     <div id="qr-code-result"></div>
     <button id="return-button" style="display: none;">Retornar</button>
@@ -163,3 +155,4 @@
   </script>
 </body>
 </html>
+
