@@ -4,22 +4,85 @@
   <title>QR Code Scanner</title>
   <script src="https://unpkg.com/@zxing/library@latest"></script>
   <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+
+    #container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: black;
+      position: relative;
+    }
+
+    #title {
+      font-size: 30px;
+      font-weight: bold;
+      color: yellow;
+      margin-bottom: 20px;
+    }
+
+    #coins {
+      font-size: 24px;
+      color: yellow;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
+
+    #qr-code-result {
+      font-size: 50px;
+      font-weight: bold;
+      color: white;
+      text-align: center;
+      z-index: 1;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
     #ar-video {
-      width: 100%;
+      width: 90%;
+      max-width: 500px;
       height: auto;
+      border: 5px solid yellow;
+    }
+
+    #return-button {
+      width: 200px;
+      height: 50px;
+      background-color: yellow;
+      color: black;
+      font-weight: bold;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
     }
   </style>
 </head>
 <body>
-  <h1 id="title">QR Code Maker</h1>
-  <div id="coins" style="position: absolute; top: 10px; right: 10px; color: yellow;"></div>
-  <hr style="background-color: lightblue; height: 5px; margin: 0;">
-  <div id="qr-code-result"></div>
-  <button id="return-button" style="display: none; background-color: yellow; width: 200px;">Retornar</button>
+  <div id="container">
+    <h1 id="title">QR Code Maker</h1>
+    <div id="coins">Moedas: 0</div>
+    <hr style="background-color: lightblue; height: 8px; width: 100%; margin: 0;">
+    <video id="ar-video"></video>
+    <div id="qr-code-result"></div>
+    <button id="return-button" style="display: none;">Retornar</button>
+  </div>
 
   <script>
     const coinsPerScan = 10; // Número de moedas concedidas por leitura de QR code
     let totalCoins = 0; // Total de moedas do usuário
+    let isScanning = true; // Indica se está em processo de leitura de QR code
 
     // Mapeamento dos QR codes e seus textos correspondentes
     const qrCodeTexts = {
@@ -45,14 +108,17 @@
 
       const returnButton = document.getElementById('return-button');
       returnButton.style.display = 'block';
+
+      isScanning = false;
     }
 
     // Função executada quando um QR code é lido
     function onQRCodeRead(result) {
-      if (result && result.text) {
+      if (result && result.text && isScanning) {
         const qrCodeText = result.text;
-        if (qrCodeTexts.hasOwnProperty(qrCodeText)) {
-          processQRCodeText(qrCodeTexts[qrCodeText]);
+        const text = qrCodeTexts[qrCodeText];
+        if (text) {
+          processQRCodeText(text);
         }
       }
     }
@@ -64,6 +130,8 @@
 
       const returnButton = document.getElementById('return-button');
       returnButton.style.display = 'none';
+
+      isScanning = true;
     }
 
     // Função para iniciar o leitor de QR code
@@ -73,7 +141,6 @@
         .decodeOnceFromVideoDevice(undefined, 'ar-video')
         .then((result) => {
           onQRCodeRead(result);
-          startQRCodeReader(); // Continuar a leitura de QR codes após cada leitura bem-sucedida
         })
         .catch((err) => {
           console.error(err);
@@ -87,13 +154,6 @@
 
     // Iniciar a leitura de QR codes ao carregar a página
     window.addEventListener('load', () => {
-      const videoElement = document.createElement('video');
-      videoElement.id = 'ar-video';
-      document.body.appendChild(videoElement);
-
-      const titleElement = document.getElementById('title');
-      titleElement.style.color = 'yellow';
-
       const returnButton = document.getElementById('return-button');
       returnButton.addEventListener('click', onReturnButtonClick);
 
