@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://unpkg.com/@zxing/library@latest"></script>
   <style>
+    /* Estilos CSS */
+
     body {
       margin: 0;
       padding: 0;
@@ -75,13 +77,13 @@
   <script>
     const coinsPerScan = 10; // Número de moedas concedidas por leitura de QR code
     let totalCoins = 0; // Total de moedas do usuário
-    let isScanning = true; // Indica se está em processo de leitura de QR code
+    let scannedQRCodes = []; // Array para armazenar os textos dos QR codes já lidos
 
     // Mapeamento dos QR codes e seus textos correspondentes
     const qrCodeTexts = {
       "CNC Laser": "Máquina CNC a laser",
-      "Impressora Resina": "RESINA",
-      "Impressora 3D": "3D"
+      "qr-code-2": "Texto do QR code 2",
+      "qr-code-3": "Texto do QR code 3"
       // Adicione mais QR codes e seus respectivos textos aqui
     };
 
@@ -102,16 +104,18 @@
       const returnButton = document.getElementById('return-button');
       returnButton.style.display = 'block';
 
-      isScanning = false; // Parar a leitura de QR code após a primeira leitura bem-sucedida
+      scannedQRCodes.push(text); // Adicionar o texto do QR code ao array de QR codes lidos
     }
 
     // Função executada quando um QR code é lido
     function onQRCodeRead(result) {
-      if (result && result.text && isScanning) {
+      if (result && result.text) {
         const qrCodeText = result.text;
-        const text = qrCodeTexts[qrCodeText];
-        if (text) {
-          processQRCodeText(text);
+        if (!scannedQRCodes.includes(qrCodeText)) {
+          const text = qrCodeTexts[qrCodeText];
+          if (text) {
+            processQRCodeText(text);
+          }
         }
       }
     }
@@ -124,7 +128,7 @@
       const returnButton = document.getElementById('return-button');
       returnButton.style.display = 'none';
 
-      isScanning = true; // Permitir a leitura de QR code novamente
+      scannedQRCodes = []; // Limpar o array de QR codes lidos
 
       startQRCodeReader(); // Reiniciar a leitura de QR codes
     }
@@ -158,4 +162,3 @@
   </script>
 </body>
 </html>
-
