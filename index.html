@@ -4,6 +4,7 @@
   <title>QR Code Scanner</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script src="https://unpkg.com/@zxing/library@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.1/js.cookie.min.js"></script>
   <style>
     /* Estilos CSS */
 
@@ -23,7 +24,7 @@
     }
 
     #title {
-      font-size: 30px;
+      font-size: 40px;
       font-weight: bold;
       color: yellow;
       margin-bottom: 20px;
@@ -40,6 +41,12 @@
       font-weight: bold;
       color: white;
       text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #qr-code-time {
+      font-size: 24px;
+      color: yellow;
       margin-bottom: 20px;
     }
 
@@ -71,6 +78,7 @@
     <hr>
     <video id="ar-video"></video>
     <div id="qr-code-result"></div>
+    <div id="qr-code-time"></div>
     <button id="return-button">Retornar</button>
   </div>
 
@@ -87,10 +95,22 @@
       // Adicione mais QR codes e seus respectivos textos aqui
     };
 
-    // Função para atualizar o total de moedas exibido na página
+    // Função para atualizar a pontuação exibida na página
     function updateCoins() {
       const coinsElement = document.getElementById('coins');
       coinsElement.innerText = `Moedas: ${totalCoins}`;
+
+      // Armazenar a pontuação em um cookie
+      Cookies.set('userCoins', totalCoins);
+    }
+
+    // Função para atualizar o horário exibido na página
+    function updateTime(time) {
+      const timeElement = document.getElementById('qr-code-time');
+      timeElement.innerText = `Horário do último QR code: ${time}`;
+
+      // Armazenar o horário em um cookie
+      Cookies.set('qrCodeTime', time);
     }
 
     // Função para processar o texto do QR code
@@ -104,6 +124,10 @@
         scannedQRCodes.push(text); // Adicionar o texto do QR code ao array de QR codes lidos
         updateCoins();
       }
+
+      // Obter o horário atual
+      const currentTime = new Date().toLocaleTimeString();
+      updateTime(currentTime);
 
       const returnButton = document.getElementById('return-button');
       returnButton.style.display = 'block';
@@ -124,6 +148,9 @@
     function onReturnButtonClick() {
       const qrCodeResultElement = document.getElementById('qr-code-result');
       qrCodeResultElement.innerText = '';
+
+      const qrCodeTimeElement = document.getElementById('qr-code-time');
+      qrCodeTimeElement.innerText = '';
 
       const returnButton = document.getElementById('return-button');
       returnButton.style.display = 'none';
@@ -154,9 +181,22 @@
       const returnButton = document.getElementById('return-button');
       returnButton.addEventListener('click', onReturnButtonClick);
 
-      updateCoins();
+      // Verificar se há um cookie com a pontuação do usuário
+      const userCoins = Cookies.get('userCoins');
+      if (userCoins) {
+        totalCoins = parseInt(userCoins);
+        updateCoins();
+      }
+
+      // Verificar se há um cookie com o horário do último QR code
+      const qrCodeTime = Cookies.get('qrCodeTime');
+      if (qrCodeTime) {
+        updateTime(qrCodeTime);
+      }
+
       startQRCodeReader();
     });
   </script>
 </body>
 </html>
+
