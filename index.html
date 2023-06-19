@@ -149,9 +149,13 @@
       // Verificar se o QR code já foi processado antes de conceder moedas
       if (!scannedQRCodes.includes(text)) {
         let coinsToAdd = coinsPerScan;
-         if (qrCodeTexts.hasOwnProperty(text) && text.startsWith("Bonus-")) {
+        totalCoins += coinsToAdd;
+        scannedQRCodes.push(text); // Adicionar o texto do QR code ao array de QR codes lidos
+        updateCoins();
+      }
+      
+      if (!scannedQRCodes.startsWith("Bonus-")) {
       let coinsToAdd = bonusCoinsValue;
-    }
         totalCoins += coinsToAdd;
         scannedQRCodes.push(text); // Adicionar o texto do QR code ao array de QR codes lidos
         updateCoins();
