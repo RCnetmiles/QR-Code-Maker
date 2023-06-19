@@ -84,23 +84,60 @@
 
   <script>
     const coinsPerScan = 10; // Número de moedas concedidas por leitura de QR code
+    const specialQRCodeValue = 20; // Valor de moedas para QR codes especiais
     let totalCoins = 0; // Total de moedas do usuário
     let scannedQRCodes = []; // Array para armazenar os textos dos QR codes já lidos
 
     // Mapeamento dos QR codes e seus textos correspondentes
     const qrCodeTexts = {
       "CNC Laser": "Máquina CNC a laser",
-      "qr-code-2": "Texto do QR code 2",
-      "qr-code-3": "Texto do QR code 3"
+      "Impressoras": "Texto do QR code 2",
+      "VR": "Texto do QR code 3",
+      "Lego": "Texto do QR code 3",
+      "Caneta": "Texto do QR code 2",
+      "23": "Texto do QR code 3",
+      "45": "Texto do QR code 3",
+      "46": "Texto do QR code 3",
+      "47": "Texto do QR code 3",
+      "53": "Texto do QR code 3",
+      "59": "Texto do QR code 3",
+      "63": "Texto do QR code 3",
+      "65": "Texto do QR code 3",
+      "103": "Texto do QR code 3",
+      "104": "Texto do QR code 3",
+      "105": "Texto do QR code 3",
+      "112": "Texto do QR code 3",
+      "116": "Texto do QR code 3",
+      "118": "Texto do QR code 3",
+      "119": "Texto do QR code 3",
+      "120": "Texto do QR code 3",
+      "122": "Texto do QR code 3",
+      "123": "Texto do QR code 3",
+      "126": "Texto do QR code 3",
+      "130": "Texto do QR code 3",
+      "136": "Texto do QR code 3",
+      "Bonus-1": "Parabens! Ganhou um qr code Bônus!!",
+      "Bonus-2": "Parabens! Ganhou um qr code Bônus!!",
+      "Bonus-3": "Parabens! Ganhou um qr code Bônus!!l",
+      "Bonus-4": "Parabens! Ganhou um qr code Bônus!!"
       // Adicione mais QR codes e seus respectivos textos aqui
     };
-
+    
+// Valor de moedas para os QR codes de bônus
+const specialQRCodeValues = {
+  "Bonus-1": 20,
+  "Bonus-2": 20,
+  "Bonus-3": 20,
+  "Bonus-4": 20,
+  // Adicione mais QR codes de bônus e seus respectivos valores aqui
+};
+    
     // Função para atualizar a pontuação exibida na página
     function updateCoins() {
       const coinsElement = document.getElementById('coins');
       coinsElement.innerText = `Moedas: ${totalCoins}`;
 
-      // Armazenar a pontuação em um cookie
+      // Armazenar a pontuação do usuário em um cookie
       Cookies.set('userCoins', totalCoins);
     }
 
@@ -120,7 +157,12 @@
 
       // Verificar se o QR code já foi processado antes de conceder moedas
       if (!scannedQRCodes.includes(text)) {
-        totalCoins += coinsPerScan;
+        let coinsToAdd = coinsPerScan;
+       if (specialQRCodeValues.hasOwnProperty(text)) {
+     let coinsToAdd = specialQRCodeValues[text];
+        }
+
+        totalCoins += coinsToAdd;
         scannedQRCodes.push(text); // Adicionar o texto do QR code ao array de QR codes lidos
         updateCoins();
       }
