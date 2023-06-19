@@ -84,7 +84,7 @@
 
   <script>
     const coinsPerScan = 10; // Número de moedas concedidas por leitura de QR code
-    const specialQRCodeValue = 20; // Valor de moedas para QR codes especiais
+   const bonusCoinsValue = 20; // Valor em moedas para os QR codes de bônus
     let totalCoins = 0; // Total de moedas do usuário
     let scannedQRCodes = []; // Array para armazenar os textos dos QR codes já lidos
 
@@ -149,8 +149,8 @@
       // Verificar se o QR code já foi processado antes de conceder moedas
       if (!scannedQRCodes.includes(text)) {
         let coinsToAdd = coinsPerScan;
-        if (text === "Bonus-1","Bonus-2","Bonus-3","Bonus-4") {
-        let coinsToAdd = specialQRCodeValue;
+         if (text.startsWith("Bonus-")) {
+      coinsToAdd = bonusCoinsValue;
         }
 
         totalCoins += coinsToAdd;
