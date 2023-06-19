@@ -89,7 +89,7 @@
     let scannedQRCodes = []; // Array para armazenar os textos dos QR codes já lidos
 
     // Mapeamento dos QR codes e seus textos correspondentes
-    const qrCodeTexts = {
+   const qrCodeTexts = {
       "CNC Laser": "Máquina CNC a laser",
       "Impressoras": "Texto do QR code 2",
       "VR": "Texto do QR code 3",
@@ -122,16 +122,7 @@
       "Bonus-4": "Parabens! Ganhou um qr code Bônus!!"
       // Adicione mais QR codes e seus respectivos textos aqui
     };
-    
-// Valor de moedas para os QR codes de bônus
-const specialQRCodeValues = {
-  "Bonus-1": 20,
-  "Bonus-2": 20,
-  "Bonus-3": 20,
-  "Bonus-4": 20,
-  // Adicione mais QR codes de bônus e seus respectivos valores aqui
-};
-    
+
     // Função para atualizar a pontuação exibida na página
     function updateCoins() {
       const coinsElement = document.getElementById('coins');
@@ -158,8 +149,8 @@ const specialQRCodeValues = {
       // Verificar se o QR code já foi processado antes de conceder moedas
       if (!scannedQRCodes.includes(text)) {
         let coinsToAdd = coinsPerScan;
-       if (specialQRCodeValues.hasOwnProperty(text)) {
-     let coinsToAdd = specialQRCodeValues[text];
+        if (text === "Bonus-1","Bonus-2","Bonus-3","Bonus-4") {
+          coinsToAdd = specialQRCodeValue;
         }
 
         totalCoins += coinsToAdd;
@@ -241,4 +232,3 @@ const specialQRCodeValues = {
   </script>
 </body>
 </html>
-
