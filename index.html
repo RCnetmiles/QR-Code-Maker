@@ -150,7 +150,7 @@
       if (!scannedQRCodes.includes(text)) {
         let coinsToAdd = coinsPerScan;
          if (text.startsWith("Bonus-")) {
-      coinsToAdd = bonusCoinsValue;
+      let coinsToAdd = bonusCoinsValue;
         }
 
         totalCoins += coinsToAdd;
