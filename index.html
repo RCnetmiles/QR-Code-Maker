@@ -29,6 +29,20 @@
       color: yellow;
       margin-bottom: 20px;
     }
+    
+    #title::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      background-image: url('coin-icon.png'); /* Caminho para a imagem do ícone de moeda */
+      background-repeat: no-repeat;
+      background-size: cover;
+      display: inline-block;
+      position: absolute;
+      left: -30px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
 
     #coins {
       font-size: 24px;
@@ -76,11 +90,30 @@
       color: white;
       margin-bottom: 20px;
     }
+    #lamp {
+      width: 30px;
+      height: 30px;
+      background-image: url('lamp-icon.png'); /* Caminho para a imagem da lâmpada */
+      background-repeat: no-repeat;
+      background-size: cover;
+      display: inline-block;
+      position: absolute;
+      top: -40px;
+      animation: blink 5s infinite;}
+
+    @keyframes blink {
+      0%, 50% {
+        opacity: 1;
+      }
+      25%, 75% {
+        opacity: 0;
+      }
+    }
   </style>
 </head>
 <body>
   <div id="container">
-    <h1 id="title">QR Code Maker</h1>
+    <h1 id="title"><span id="lamp"></span>QR Code Maker</h1>
     <div id="coins">Moedas: 0</div>
     <hr>
     <video id="ar-video"></video>
@@ -205,8 +238,8 @@
   "100 Pts - Marca Texto e Chaveiro",
   "120 Pts - Kit brinde completo!",
   "Os brindes infelizmente são de número limitado...",
-  "Não me pergunte como fiz esse site, nem eu sei hehehe",
-  "É brincadeira, se estiver interessado em como montar um site como esse é só perguntar!",
+  "Leia o conteudo informativo com atenção, o Qr Code irá ser lido somente uma vez.",
+  "Está interessado em como montar um site como esse? é só perguntar!",
   "Muita coisa pra ver né?"
 ];
 
