@@ -69,6 +69,13 @@
       margin-bottom: 20px;
       display: none;
     }
+
+    #message {
+      font-size: 24px;
+      font-weight: bold;
+      color: white;
+      margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
@@ -80,6 +87,7 @@
     <div id="qr-code-result"></div>
     <div id="qr-code-time"></div>
     <button id="return-button">Retornar</button>
+    <div id="message"></div>
   </div>
 
   <script>
@@ -120,8 +128,7 @@
   "Bonus-3": "Parabéns! Ganhou o Qr code Bônus-3!!",
   "Bonus-4": "Parabéns! Ganhou o Qr code Bônus-4!!"
 };  // Adicione mais QR codes e seus respectivos textos aqui
-
-
+    
     // Função para atualizar a pontuação exibida na página
     function updateCoins() {
       const coinsElement = document.getElementById('coins');
@@ -131,47 +138,79 @@
       Cookies.set('userCoins', totalCoins);
     }
 
-    // Função para atualizar o horário exibido na página
-    function updateTime(time) {
-      const timeElement = document.getElementById('qr-code-time');
-      timeElement.innerText = `Horário do último QR code: ${time}`;
-
-      // Armazenar o horário em um cookie
-      Cookies.set('qrCodeTime', time);
-    }
-
-    // Função para processar o texto do QR code
-    function processQRCodeText(text) {
+    // Função para iniciar o leitor de QR code
+    function startQRCodeReader() {
       const qrCodeResultElement = document.getElementById('qr-code-result');
-      qrCodeResultElement.innerText = text;
-
-      // Verificar se o QR code já foi processado antes de conceder moedas
-      if (!scannedQRCodes.includes(text)) {
-        totalCoins += coinsPerScan;
-        scannedQRCodes.push(text); // Adicionar o texto do QR code ao array de QR codes lidos
-        updateCoins();
-      }
-
-      // Obter o horário atual
-      const currentTime = new Date().toLocaleTimeString();
-      updateTime(currentTime);
-
+      const qrCodeTimeElement = document.getElementById('qr-code-time');
       const returnButton = document.getElementById('return-button');
-      returnButton.style.display = 'block';
+      const arVideo = document.getElementById('ar-video');
+      const constraints = { video: { facingMode: 'environment' } };
+
+      qrCodeResultElement.innerText = '';
+      qrCodeTimeElement.innerText = '';
+      returnButton.style.display = 'none';
+
+      navigator.mediaDevices.getUserMedia(constraints)
+        .then((stream) => {
+          arVideo.srcObject = stream;
+          qrCodeTimeElement.innerText = 'Aguardando leitura de QR code...';
+
+          const codeReader = new ZXing.BrowserQRCodeReader();
+          codeReader.decodeFromVideoDevice(null, 'ar-video', (result) => {
+            if (result && !scannedQRCodes.includes(result.text)) {
+              scannedQRCodes.push(result.text);
+              const qrCodeText = qrCodeTexts[result.text] || 'Texto não encontrado para este QR code.';
+
+              qrCodeResultElement.innerText = qrCodeText;
+              totalCoins += coinsPerScan;
+              updateCoins();
+
+              qrCodeTimeElement.innerText = 'QR code lido com sucesso!';
+              returnButton.style.display = 'block';
+
+              stopQRCodeReader();
+            }
+          });
+        })
+        .catch((error) => {
+          console.error('Erro ao acessar a câmera:', error);
+        });
     }
 
-    // Função executada quando um QR code é lido
-    function onQRCodeRead(result) {
-      if (result && result.text) {
-        const qrCodeText = result.text;
-        const text = qrCodeTexts[qrCodeText];
-        if (text) {
-          processQRCodeText(text);
-        }
+    // Função para parar o leitor de QR code
+    function stopQRCodeReader() {
+      const arVideo = document.getElementById('ar-video');
+      const stream = arVideo.srcObject;
+
+      if (stream) {
+        const tracks = stream.getTracks();
+
+        tracks.forEach((track) => {
+          track.stop();
+        });
+
+        arVideo.srcObject = null;
       }
     }
 
-    // Função executada quando o botão de retornar é clicado
+    // Função para exibir as mensagens alternadas
+    function showMessage() {
+      const messageElement = document.getElementById('message');
+      let messageIndex = 0;
+      const messages = [
+        "Aproveite a feira! Preste atenção aos apresentadores e tire dúvidas.",
+        "Existem QR Codes Bônus escondidos...",
+        "Não me pergunte como fiz esse site, nem eu sei hehehe",
+        "É brincadeira, se estiver interessado em como montar um site como esse é só perguntar!"
+      ];
+
+      setInterval(() => {
+        messageElement.innerText = messages[messageIndex];
+        messageIndex = (messageIndex + 1) % messages.length;
+      }, 5000); // Altera a mensagem a cada 5 segundos (5000 milissegundos)
+    }
+
+    // Função chamada quando o botão "Retornar" é clicado
     function onReturnButtonClick() {
       const qrCodeResultElement = document.getElementById('qr-code-result');
       qrCodeResultElement.innerText = '';
@@ -182,45 +221,26 @@
       const returnButton = document.getElementById('return-button');
       returnButton.style.display = 'none';
 
-      startQRCodeReader(); // Reiniciar a leitura de QR codes
+      stopQRCodeReader(); // Parar a leitura de QR codes
+
+      setTimeout(() => {
+        startQRCodeReader(); // Reiniciar a leitura de QR codes após 3 minutos
+        showMessage(); // Exibir mensagens alternadas
+      }, 180000); // 3 minutos (180000 milissegundos)
     }
 
-    // Função para iniciar o leitor de QR code
-    function startQRCodeReader() {
-      const codeReader = new ZXing.BrowserQRCodeReader();
-      codeReader
-        .decodeOnceFromVideoDevice(undefined, 'ar-video')
-        .then((result) => {
-          onQRCodeRead(result);
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    }
-
-    // Função para parar o leitor de QR code
-    function stopQRCodeReader() {
-      ZXing.BrowserQRCodeReader.reset();
-    }
-
-    // Iniciar a leitura de QR codes ao carregar a página
     window.addEventListener('load', () => {
       const returnButton = document.getElementById('return-button');
       returnButton.addEventListener('click', onReturnButtonClick);
 
-      // Verificar se há um cookie com a pontuação do usuário
-      const userCoins = Cookies.get('userCoins');
-      if (userCoins) {
-        totalCoins = parseInt(userCoins);
-        updateCoins();
+      const userCoinsCookie = Cookies.get('userCoins');
+      if (userCoinsCookie) {
+        totalCoins = parseInt(userCoinsCookie);
       }
 
-      // Verificar se há um cookie com o horário do último QR code
-      const qrCodeTime = Cookies.get('qrCodeTime');
-      if (qrCodeTime) {
-        updateTime(qrCodeTime);
-      }
+      updateCoins();
 
+      showMessage();
       startQRCodeReader();
     });
   </script>
