@@ -108,7 +108,8 @@
 </head>
 <body>
   <div id="container">
-    <h1 id="title"><div id="pixel-lamp"></div>QR Code Maker</h1>
+    <h1 id="title">QR Code Maker</h1>
+    <div id="pixel-lamp"></div>
     <div id="coins">Moedas: 0</div>
     <hr>
     <video id="ar-video"></video>
@@ -251,21 +252,21 @@
 }
     // Função chamada quando o botão "Retornar" é clicado
     function onReturnButtonClick() {
-  const qrCodeResultElement = document.getElementById('qr-code-result');
-  qrCodeResultElement.innerText = '';
+      const qrCodeResultElement = document.getElementById('qr-code-result');
+      qrCodeResultElement.innerText = '';
 
-  const qrCodeTimeElement = document.getElementById('qr-code-time');
-  qrCodeTimeElement.innerText = '';
+      const qrCodeTimeElement = document.getElementById('qr-code-time');
+      qrCodeTimeElement.innerText = '';
 
-  const returnButton = document.getElementById('return-button');
-  returnButton.style.display = 'none';
+      const returnButton = document.getElementById('return-button');
+      returnButton.style.display = 'none';
 
-  scannedQRCodes.pop(); // Remove o QR code lido anteriormente da lista
+      stopQRCodeReader(); // Parar a leitura de QR codes
 
-  setTimeout(() => {
-    startQRCodeReader(); // Reiniciar a leitura de QR codes após 3 minutos
-    showMessage(); // Exibir mensagens alternadas
-  }, 30000); // meio minuto (30000 milissegundos)
+      setTimeout(() => {
+        startQRCodeReader(); // Reiniciar a leitura de QR codes após 3 minutos
+        showMessage(); // Exibir mensagens alternadas
+      }, 30000); // meio minuto (30000 milissegundos)
 }
 
 
