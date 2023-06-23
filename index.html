@@ -76,12 +76,39 @@
       color: white;
       margin-bottom: 20px;
     }
+    #pixel-lamp {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ff0000;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  animation-name: pixel-lamp-animation;
+  animation-duration: 5s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes pixel-lamp-animation {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
     
   </style>
 </head>
 <body>
   <div id="container">
-    <h1 id="title">QR Code Maker</h1>
+    <h1 id="title"><div id="pixel-lamp"></div>QR Code Maker</h1>
     <div id="coins">Moedas: 0</div>
     <hr>
     <video id="ar-video"></video>
@@ -197,6 +224,7 @@
     // Função para exibir as mensagens alternadas
     function showMessage() {
       const messageElement = document.getElementById('message');
+      const pixelLamp = document.getElementById('pixel-lamp');
       let messageIndex = 0;
       const messages = [
   "Aproveite a feira! Preste atenção aos apresentadores e tire dúvidas.",
@@ -212,29 +240,34 @@
 ];
 
       setInterval(() => {
-        messageElement.innerText = messages[messageIndex];
-        messageIndex = (messageIndex + 1) % messages.length;
-      }, 5000); // Altera a mensagem a cada 5 segundos (5000 milissegundos)
-    }
+    messageElement.innerText = messages[messageIndex];
+    messageIndex = (messageIndex + 1) % messages.length;
 
+    pixelLamp.style.display = 'block';
+    setTimeout(() => {
+      pixelLamp.style.display = 'none';
+    }, 5000); // Liga a lâmpada por 5 segundos (mesma duração da mensagem)
+  }, 5000); // Altera a mensagem a cada 5 segundos (5000 milissegundos)
+}
     // Função chamada quando o botão "Retornar" é clicado
     function onReturnButtonClick() {
-      const qrCodeResultElement = document.getElementById('qr-code-result');
-      qrCodeResultElement.innerText = '';
+  const qrCodeResultElement = document.getElementById('qr-code-result');
+  qrCodeResultElement.innerText = '';
 
-      const qrCodeTimeElement = document.getElementById('qr-code-time');
-      qrCodeTimeElement.innerText = '';
+  const qrCodeTimeElement = document.getElementById('qr-code-time');
+  qrCodeTimeElement.innerText = '';
 
-      const returnButton = document.getElementById('return-button');
-      returnButton.style.display = 'none';
+  const returnButton = document.getElementById('return-button');
+  returnButton.style.display = 'none';
 
-      stopQRCodeReader(); // Parar a leitura de QR codes
+  scannedQRCodes.pop(); // Remove o QR code lido anteriormente da lista
 
-      setTimeout(() => {
-        startQRCodeReader(); // Reiniciar a leitura de QR codes após 3 minutos
-        showMessage(); // Exibir mensagens alternadas
-      }, 60000); // 1 minuto (60000 milissegundos)
-    }
+  setTimeout(() => {
+    startQRCodeReader(); // Reiniciar a leitura de QR codes após 3 minutos
+    showMessage(); // Exibir mensagens alternadas
+  }, 60000); // 1 minuto (60000 milissegundos)
+}
+
 
     window.addEventListener('load', () => {
       const returnButton = document.getElementById('return-button');
